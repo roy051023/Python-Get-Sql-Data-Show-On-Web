@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta charset="UTF-8">
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
+	</head>
+
+	<body>
+		<center>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#btn1").click(function() {
+					ajax(1);
+			    });
+
+			    $("#btn2").click(function() {
+			    	value = document.getElementById("value").value;
+			    	re = /^\d+$/;
+			    	if(re.test(value))
+						ajax(2);
+					else{
+						$('#container').empty();
+						$('#container').append("Failed !");
+					}
+			    });
+			    $("#btn3").click(function() {
+			    	value = document.getElementById("threshold").value;
+			    	re = /^\d+$/;
+			    	if(re.test(value))
+						ajax(3);
+					else{
+						$('#container').empty();
+						$('#container').append("Failed !");
+					}
+			    });
+		    });
+		    
+
+		    function ajax(myType){
+				$.ajax({
+						type: "POST",
+						url: "callpython.php",
+						data: "type=" + myType + "&value=" + value,
+						dataType: 'json',
+						success: function(data){
+							val = [];
+							$('#container').empty();
+							if(myType == 1){
+								for(i=0;i<data.length;i++){
+									val.push({y:parseInt(data[i]["value"]), marker: {radius: 5}});
+								}
+								highchart();
+							}
+							else if(myType == 2){
+								$('#container').append(data["result"]);
+							}
+							else{
+								for(i=0;i<data.length;i++){
+									val.push({y:parseInt(data[i]["value"]), marker: {fillColor: data[i]['color'], radius: 5}});
+								}
+								highchart();
+							}
+						}
+				});
+		    }
+
+		    function highchart(){
+		    	Highcharts.chart('container', {
+		    		title: {
+        				text: '光敏值'
+    				},
+    				legend: {
+        				layout: 'vertical',
+        				align: 'right',
+        				verticalAlign: 'middle'
+    				},
+    				xAxis: {
+						title: {
+						text: "Time"
+						},
+						labels:{
+							enabled: false,
+						}
+					},
+    				series:[{
+        				name: "光敏值",
+        				data: val,
+    				}]
+		    	});
+		    }
+		</script>
+
+		<div class="container">
+			<div>
+				<button id = "btn1">抓資料畫圖</button>
+			</div>
+			<br>
+			<div>
+				<label>Value：</label>
+				<input id = "value" type="text">
+				<button id = "btn2">上傳</button>
+			</div>
+			<br>
+			<div>
+				<label>Threshold：</label>
+				<input id = "threshold" type="text">
+				<button id = "btn3">設定</button>
+			</div>
+			<br><br>
+			<div id="container" style="min-width: 700px; height: 700px; margin: 0 auto"></div>
+		</div>
+		</center>
+	</body>
+</html>
