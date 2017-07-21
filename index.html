@@ -44,7 +44,7 @@
 		    function ajax(myType){
 				$.ajax({
 						type: "POST",
-						url: "callpython.php",
+						url: "http://140.120.13.184/iot/callpython.php",
 						data: "type=" + myType + "&value=" + value,
 						dataType: 'json',
 						success: function(data){
@@ -52,7 +52,7 @@
 							$('#container').empty();
 							if(myType == 1){
 								for(i=0;i<data.length;i++){
-									val.push({y:parseInt(data[i]["value"]), marker: {radius: 5}});
+									val.push({y:parseInt(data[i]["value"]), marker: {radius: 7}});
 								}
 								highchart();
 							}
@@ -61,7 +61,7 @@
 							}
 							else{
 								for(i=0;i<data.length;i++){
-									val.push({y:parseInt(data[i]["value"]), marker: {fillColor: data[i]['color'], radius: 5}});
+									val.push({y:parseInt(data[i]["value"]), marker: {fillColor: data[i]['color'], radius: 7}});
 								}
 								highchart();
 							}
@@ -87,6 +87,13 @@
 							enabled: false,
 						}
 					},
+					plotOptions: {
+        				line: {
+            				dataLabels: {
+                				enabled: true
+            				}
+        				}
+    				},
     				series:[{
         				name: "光敏值",
         				data: val,
